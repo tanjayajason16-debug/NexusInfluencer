@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Media | AI Influencer Manager{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <h1>Upload Media</h1>
+      <p>Add a generated image or video to the asset library.</p>
+    </div>
+  </div>
+
+  <form class="panel form-panel" method="post" enctype="multipart/form-data" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="form-grid">
+      <div class="col-md-6">
+        {{ form.persona_id.label(class="form-label") }}
+        {{ form.persona_id(class="form-select") }}
+      </div>
+
+      <div class="col-md-6">
+        {{ form.file.label(class="form-label") }}
+        {{ form.file(class="form-control", style="padding: 8px 12px; background: rgba(255,255,255,0.02);") }}
+        {% for error in form.file.errors %}
+          <div class="form-text text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="col-full">
+        {{ form.prompt.label(class="form-label") }}
+        {{ form.prompt(class="form-control", rows="3", placeholder="The exact prompt used to generate this asset...") }}
+      </div>
+
+      <div class="col-md-6">
+        {{ form.caption_idea.label(class="form-label") }}
+        {{ form.caption_idea(class="form-control", rows="4", placeholder="Initial thoughts for a caption...") }}
+      </div>
+
+      <div class="col-md-6">
+        {{ form.generation_notes.label(class="form-label") }}
+        {{ form.generation_notes(class="form-control", rows="4", placeholder="Seeds, steps, upscaler info...") }}
+      </div>
+    </div>
+
+    <div class="action-row mt-4 pt-3" style="border-top: 1px solid var(--app-border);">
+      {{ form.submit(class="btn btn-primary") }}
+      <a class="btn btn-outline-secondary" href="{{ url_for('media.index') }}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}

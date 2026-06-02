@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}{{ persona.name }} Profile | AI Influencer Manager{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 8px;">
+        <div class="persona-avatar" style="width: 48px; height: 48px; font-size: 20px; box-shadow: none;">
+          {{ persona.name[:1] | upper }}
+        </div>
+        <h1 style="margin: 0;">{{ persona.name }}</h1>
+      </div>
+      <p>{{ persona.niche }} - publish-ready profile</p>
+    </div>
+    <div class="action-row">
+      <a class="btn btn-outline-secondary" href="{{ url_for('personas.detail', persona_id=persona.id) }}">Admin Details</a>
+      <a class="btn btn-primary" href="{{ url_for('media.create') }}">Upload Asset</a>
+    </div>
+  </div>
+
+  <section class="panel mb-4">
+    <div class="panel-header">
+      <h2>Persona Guide</h2>
+      <span class="status-pill {{ 'status-active' if persona.is_active else 'status-muted' }}">
+        {{ 'Active' if persona.is_active else 'Inactive' }}
+      </span>
+    </div>
+    <div class="profile-guide">
+      <div>
+        <strong>Bio</strong>
+        <p>{{ persona.bio or 'No bio added yet.' }}</p>
+      </div>
+      <div>
+        <strong>Visual Style</strong>
+        <p>{{ persona.visual_style or 'No visual style added yet.' }}</p>
+      </div>
+      <div>
+        <strong>Caption Tone</strong>
+        <p>{{ persona.caption_tone or 'No caption tone added yet.' }}</p>
+      </div>
+      <div>
+        <strong>Reference Notes</strong>
+        <p>{{ persona.reference_notes or 'No reference notes added yet.' }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel mb-4">
+    <div class="panel-header">
+      <h2>Approved Media</h2>
+      <a href="{{ url_for('media.index', persona_id=persona.id) }}">View all assets &rarr;</a>
+    </div>
+
+    {% if assets %}
+      <div class="profile-media-grid">
+        {% for asset in assets %}
+          <article class="profile-media-card">
+            <div class="profile-media-preview">
+              {% if asset.media_type == 'image' %}
+                <img src="{{ url_for('static', filename=asset.file_path) }}" alt="{{ asset.original_filename }}" style="object-position: top;">
+              {% else %}
+                <video controls>
+                  <source src="{{ url_for('static', filename=asset.file_path) }}">
+                </video>
+              {% endif %}
+            </div>
+
+            <div class="profile-media-body">
+              <div class="d-flex justify-content-between gap-2 mb-2">
+                <strong style="color: #fff; font-size: 15px;">{{ asset.original_filename }}</strong>
+                <span class="status-pill status-{{ asset.status }}">{{ asset.status.replace('_', ' ').title() }}</span>
+              </div>
+
+              {% set asset_captions = captions_by_asset.get(asset.id, []) %}
+              {% if asset_captions %}
+                <div class="caption-list mt-3">
+                  {% for caption in asset_captions %}
+                    <div class="copy-block">
+                      <textarea readonly>{{ caption.text }}{% if caption.hashtags %}
+
+{{ caption.hashtags }}{% endif %}</textarea>
+                      <button class="btn btn-sm btn-outline-secondary copy-button" type="button" style="width: 100%;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                        Copy Caption
+                      </button>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="empty-state compact mt-3" style="border-style: solid;">No caption linked to this asset yet.</div>
+              {% endif %}
+
+              <div class="action-row mt-4 pt-3" style="border-top: 1px solid var(--app-border);">
+                <a class="btn btn-sm btn-primary" href="{{ url_for('media.download', asset_id=asset.id) }}">Download</a>
+                <a class="btn btn-sm btn-outline-secondary ms-auto" href="{{ url_for('media.detail', asset_id=asset.id) }}">Asset Details</a>
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; opacity: 0.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <h2>No approved media</h2>
+        <p>Approve an asset or mark it ready to post to show it here.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <div class="panel-header">
+      <h2>General Captions</h2>
+      <a href="{{ url_for('planning.create_caption') }}">New caption &rarr;</a>
+    </div>
+    {% if general_captions %}
+      <div class="caption-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px;">
+        {% for caption in general_captions %}
+          <article class="caption-item">
+            <div class="caption-meta mb-2">{{ caption.tone or 'General caption' }}</div>
+            <div class="copy-block">
+              <textarea readonly>{{ caption.text }}{% if caption.hashtags %}
+
+{{ caption.hashtags }}{% endif %}</textarea>
+              <button class="btn btn-sm btn-outline-secondary copy-button" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                Copy Caption
+              </button>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state compact" style="border-style: solid;">No general captions saved for this persona.</div>
+    {% endif %}
+  </section>
+{% endblock %}

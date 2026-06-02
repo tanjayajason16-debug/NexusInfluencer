@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Media Asset | AI Influencer Manager{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <h1 class="mb-1">Media Asset</h1>
+      <p>{{ asset.persona.name }} - {{ asset.media_type.title() }}</p>
+    </div>
+    <div class="action-row">
+      <form action="{{ url_for('media.delete', asset_id=asset.id) }}" method="post" style="margin: 0;">
+        <button class="btn btn-outline-danger" type="submit">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          Delete Asset
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="detail-grid detail-grid-media">
+    <div>
+      <div class="panel panel--flush" style="overflow: hidden; aspect-ratio: auto; background: #080d1a;">
+        {% if asset.media_type == 'image' %}
+          <img class="img-fluid" src="{{ url_for('static', filename=asset.file_path) }}" alt="{{ asset.original_filename }}" style="width: 100%; display: block;">
+        {% else %}
+          <video class="w-100" controls style="width: 100%; display: block;">
+            <source src="{{ url_for('static', filename=asset.file_path) }}">
+          </video>
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      <section class="panel mb-4">
+        <div class="panel-header">
+          <h2>Status</h2>
+        </div>
+        <form method="post">
+          {{ form.hidden_tag() }}
+          <div class="d-flex gap-2">
+            {{ form.status(class="form-select") }}
+            {{ form.submit(class="btn btn-primary") }}
+          </div>
+        </form>
+      </section>
+
+      <section class="panel mb-4">
+        <div class="panel-header">
+          <h2>Details</h2>
+        </div>
+        <dl>
+          <dt>Persona</dt>
+          <dd><a href="{{ url_for('personas.detail', persona_id=asset.persona.id) }}">{{ asset.persona.name }}</a></dd>
+          <dt>Filename</dt>
+          <dd>{{ asset.original_filename }}</dd>
+          <dt>Stored path</dt>
+          <dd>{{ asset.file_path }}</dd>
+          <dt>Prompt</dt>
+          <dd>{{ asset.prompt or 'No prompt saved.' }}</dd>
+          <dt>Caption idea</dt>
+          <dd>{{ asset.caption_idea or 'No caption idea saved.' }}</dd>
+          <dt>Generation notes</dt>
+          <dd>{{ asset.generation_notes or 'No generation notes saved.' }}</dd>
+        </dl>
+      </section>
+
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Review Notes</h2>
+        </div>
+        {% if asset.review_notes %}
+          <div class="caption-list">
+            {% for note in asset.review_notes|sort(attribute='created_at', reverse=true) %}
+              <div class="caption-item" style="padding: 14px;">
+                <div class="caption-meta mb-1">
+                  <span class="status-pill status-{{ note.decision }}" style="font-size: 10px; padding: 3px 6px;">{{ note.decision }}</span>
+                  <span class="ms-2">by {{ note.user.email }}</span>
+                </div>
+                <p style="font-size: 13px; margin: 0;">{{ note.note or 'No note added.' }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty-state compact" style="border-style: solid;">No review notes yet.</div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}{{ persona.name }} | AI Influencer Manager{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <h1 class="mb-1">{{ persona.name }}</h1>
+      <p>{{ persona.niche }}</p>
+    </div>
+    <div class="action-row">
+      <a class="btn btn-success" href="{{ url_for('personas.profile', persona_id=persona.id) }}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Profile Page
+      </a>
+      <a class="btn btn-outline-secondary" href="{{ url_for('personas.edit', persona_id=persona.id) }}">Edit</a>
+      <form action="{{ url_for('personas.delete', persona_id=persona.id) }}" method="post" style="margin:0;">
+        <button class="btn btn-outline-danger" type="submit">Delete</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="mb-4">
+    <span class="status-pill {{ 'status-active' if persona.is_active else 'status-muted' }}">
+      {{ 'Active' if persona.is_active else 'Inactive' }}
+    </span>
+  </div>
+
+  <div class="detail-grid">
+    <section class="detail-section">
+      <h2>Bio</h2>
+      <p>{{ persona.bio or 'No bio added yet.' }}</p>
+    </section>
+
+    <section class="detail-section">
+      <h2>Reference Image</h2>
+      <p>{{ persona.reference_image_path or 'No reference image path added yet.' }}</p>
+    </section>
+
+    <section class="detail-section">
+      <h2>Personality</h2>
+      <p>{{ persona.personality or 'No personality notes added yet.' }}</p>
+    </section>
+
+    <section class="detail-section">
+      <h2>Visual Style</h2>
+      <p>{{ persona.visual_style or 'No visual style added yet.' }}</p>
+    </section>
+
+    <section class="detail-section">
+      <h2>Caption Tone</h2>
+      <p>{{ persona.caption_tone or 'No caption tone added yet.' }}</p>
+    </section>
+
+    <section class="detail-section">
+      <h2>Reference Notes</h2>
+      <p>{{ persona.reference_notes or 'No reference notes added yet.' }}</p>
+    </section>
+  </div>
+{% endblock %}

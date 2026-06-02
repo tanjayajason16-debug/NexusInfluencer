@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Login | AI Influencer Manager{% endblock %}
+
+{% block body_class %}login-body{% endblock %}
+
+{% block content %}
+  <div class="login-wrapper">
+    <div class="login-orb"></div>
+    
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="login-brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <div>
+          <h1>AI Influencer Manager</h1>
+          <p>Sign in to your admin dashboard</p>
+        </div>
+      </div>
+
+      <form method="post" novalidate>
+        {{ form.hidden_tag() }}
+
+        <div class="mb-3">
+          {{ form.email.label(class="form-label") }}
+          {{ form.email(class="form-control", autocomplete="email", placeholder="admin@example.com") }}
+          {% for error in form.email.errors %}
+            <div class="form-text text-danger">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="mb-4">
+          {{ form.password.label(class="form-label") }}
+          {{ form.password(class="form-control", autocomplete="current-password", placeholder="••••••••") }}
+          {% for error in form.password.errors %}
+            <div class="form-text text-danger">{{ error }}</div>
+          {% endfor %}
+        </div>
+
+        <div class="form-check mb-4">
+          {{ form.remember_me(class="form-check-input") }}
+          {{ form.remember_me.label(class="form-check-label") }}
+        </div>
+
+        {{ form.submit(class="btn btn-primary w-100") }}
+      </form>
+    </div>
+  </div>
+{% endblock %}

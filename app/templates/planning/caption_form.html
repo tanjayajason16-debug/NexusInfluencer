@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}New Caption | AI Influencer Manager{% endblock %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <h1>New Caption</h1>
+      <p>Save caption text for a persona or a specific asset.</p>
+    </div>
+  </div>
+
+  <form class="panel form-panel" method="post" novalidate>
+    {{ form.hidden_tag() }}
+
+    <div class="form-grid">
+      <div class="col-md-6">
+        {{ form.persona_id.label(class="form-label") }}
+        {{ form.persona_id(class="form-select") }}
+      </div>
+      <div class="col-md-6">
+        {{ form.media_asset_id.label(class="form-label") }}
+        {{ form.media_asset_id(class="form-select") }}
+      </div>
+      
+      <div class="col-full">
+        {{ form.prompt.label(class="form-label") }}
+        {{ form.prompt(class="form-control", rows="2", placeholder="Optional: add a short caption prompt or note for the AI generator.") }}
+      </div>
+      
+      <div class="col-full mt-2">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          {{ form.text.label(class="form-label") }}
+          <button type="submit" name="action" value="generate" class="btn btn-sm btn-outline-primary" style="padding: 4px 10px;">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px"><path d="M12 2v4"/><path d="M12 18v4"/><path d="M4.93 4.93l2.83 2.83"/><path d="M16.24 16.24l2.83 2.83"/><path d="M2 12h4"/><path d="M18 12h4"/><path d="M4.93 19.07l2.83-2.83"/><path d="M16.24 7.76l2.83-2.83"/></svg>
+            Auto-generate
+          </button>
+        </div>
+        {{ form.text(class="form-control", rows="5") }}
+        {% for error in form.text.errors %}
+          <div class="form-text text-danger">{{ error }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="col-md-4">
+        {{ form.tone.label(class="form-label") }}
+        {{ form.tone(class="form-control", placeholder="Stylish, playful, calm...") }}
+      </div>
+      
+      <div class="col-md-8">
+        {{ form.hashtags.label(class="form-label") }}
+        {{ form.hashtags(class="form-control", rows="2", placeholder="#aiinfluencer #digitalfashion") }}
+      </div>
+    </div>
+
+    <div class="action-row mt-4 pt-3" style="border-top: 1px solid var(--app-border);">
+      {{ form.submit(class="btn btn-primary", name="action", value="save") }}
+      <a class="btn btn-outline-secondary" href="{{ url_for('planning.index') }}">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
