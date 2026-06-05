@@ -4,6 +4,7 @@ import io
 
 from flask import Blueprint, current_app, flash, redirect, render_template, request, send_file, url_for
 from flask_login import login_required
+from werkzeug.utils import secure_filename
 
 from app.extensions import db
 from app.media.forms import MediaAssetForm, MediaStatusForm

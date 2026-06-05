@@ -35,6 +35,20 @@ def create_app(config_class=Config):
 
     register_commands(app)
 
+    with app.app_context():
+        db.create_all()
+        admin_email = app.config.get("ADMIN_EMAIL")
+        admin_password = app.config.get("ADMIN_PASSWORD")
+        if admin_email and admin_password:
+            from app.models import User
+            existing_user = User.query.filter_by(email=admin_email.lower()).first()
+            if not existing_user:
+                admin_user = User(email=admin_email.lower(), is_admin=True)
+                admin_user.set_password(admin_password)
+                db.session.add(admin_user)
+                db.session.commit()
+                app.logger.info(f"Default admin user created: {admin_email}")
+
     return app
 
 
